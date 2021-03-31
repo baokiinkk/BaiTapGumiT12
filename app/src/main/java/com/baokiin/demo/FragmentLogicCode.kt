@@ -34,7 +34,8 @@ class FragmentLogicCode : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_logic_code, container, false)
-
+        countCheckLogic = 0 // biến đếm các view dx chọn bằng logic code
+        viewItemChoose = null
         onClickCustom(view.includeTitle)
         onClickCustom(view.btnAddItem)
         onClickCustom(view.btnRemoveItem)
