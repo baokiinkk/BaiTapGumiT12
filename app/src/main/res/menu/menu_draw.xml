@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view"
+    >
+    <item android:title="Liên hệ"
+        >
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/recycleView"
+                    android:title="RecycleView" />
+                <item
+                    android:id="@+id/logicCode"
+                    android:title="LogicCode" />
+
+            </group>
+        </menu>
+    </item>
+    <item android:title="Đánh giá và chia sẻ">
+        <menu>
+            <item android:title="Chia sẻ"
+                android:id="@+id/nav_share"
+                />
+            <item
+                android:title="Đánh giá"
+                android:id="@+id/nav_danhgia"/>
+            <item
+                android:id="@+id/nav_capnhat"
+                android:title="Tải app UIS"
+                />
+        </menu>
+    </item>
+
+</menu>

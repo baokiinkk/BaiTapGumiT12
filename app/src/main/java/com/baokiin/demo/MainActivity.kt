@@ -1,175 +1,82 @@
 package com.baokiin.demo
 
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
-import kotlinx.android.synthetic.main.item_layout.view.*
-import kotlinx.android.synthetic.main.title_layout.view.*
-import kotlin.math.abs
+import kotlinx.android.synthetic.main.app_bar.view.*
+import kotlinx.android.synthetic.main.fragment_recycle_view.view.*
+import kotlinx.android.synthetic.main.navigation_view.view.*
 
 class MainActivity : AppCompatActivity() {
-    private var onclick:ListenerOnclick? = null
-    private var posXDown = 0f
-    private var posYDown = 0f
-    private var isRecycleView = true  //kiểm tra đang dùng cách recycleVew hay logic code(true:recycleView)
-    private var idItem = 0 // biến sinh id cho các view sinh ra bằng code
-    private var countCheckLogic = 0 // biến đếm các view dx chọn bằng logic code
-    private var positionItemChoose:Int? = null
-    private var viewItemChoose:View? = null
-    private lateinit var adapter: Adapter
-    private val list = mutableListOf<DataItem>()
-    @SuppressLint("SetTextI18n")
+    private lateinit var listFragment:MutableList<Fragment>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        for(i in 0..5)
-            list.add(DataItem("Quốc Bảo $i",false))
+        listFragment = mutableListOf()
+        listFragment.add(FragmentRecycleView())
+        listFragment.add(FragmentLogicCode())
 
-        adapter = Adapter(list){pos->
-                includeTitle.name.text = list[pos].name
-                includeTitle.pos.text = "Position: $pos"
-                positionItemChoose = pos
+        val listTitleNavi = mutableListOf<String>("RecycleView","LogicCode")
+        val adapter = AdapterNavi(listTitleNavi){
+            replaceFragment(listFragment[it])
+            textView.text = listTitleNavi[it]
+            drawerLayout.closeDrawers()
         }
-
         val linearLayout: RecyclerView.LayoutManager = LinearLayoutManager(this)
-        recycleView.adapter=adapter
-        recycleView.layoutManager=linearLayout
-        setSupportActionBar(toolbar)
+        nav_view.naviRecycle.adapter=adapter
+        nav_view.naviRecycle.layoutManager=linearLayout
 
-        onClick(includeTitle)
-        onClick(addItem)
-        onClick(removeItem)
-        myOnClick{
-            when(it.id){
-                R.id.includeTitle -> {
-                    if(isRecycleView)
-                        Toast.makeText(this, adapter.countCheck.toString(), Toast.LENGTH_SHORT).show()
-                    else
-                        Toast.makeText(this,countCheckLogic.toString(),Toast.LENGTH_SHORT).show()
-                }
+        includeActionBar.tablayout.addOnTabSelectedListener(object:TabLayout.OnTabSelectedListener{
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
 
-                R.id.addItem->{
-                    if(isRecycleView) {
-                       addItemRecycleView()
-                    }
-                    else{
-                      addLogicCode()
-                    }
-                }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
 
-                R.id.removeItem->{
-                    if(isRecycleView) {
-                        removeItemRecycleView()
-                    }
-                    else{
-                        removeLogicCode()
-                    }
-                }
+            }
 
-                in 0..idItem->{
-                    val viewCheck = it.checkLayout
-                    includeTitle.name.text = it.txtName.text
-                    includeTitle.pos.text = "Position: ${it.id}"
-                    viewItemChoose = it
-                    if(viewCheck.visibility != View.VISIBLE){
-                        viewCheck.visibility = View.VISIBLE
-                        countCheckLogic++
-                    }
-                    else{
-                        viewCheck.visibility = View.GONE
-                        countCheckLogic--
-
-                    }
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.let {
+                    replaceFragment(listFragment[it.position])
+                    textView.text = listTitleNavi[it.position]
                 }
             }
 
+        })
+
+        btnBack.setOnClickListener {
+            if(supportFragmentManager.backStackEntryCount <= 0){
+                drawerLayout.openDrawer(nav_view)
+            }
+            else
+                onBackPressed()
         }
 
     }
-    private fun addItemRecycleView(){
-         list.add(DataItem("Quốc bảo ${list[list.size - 1].name.substring(9).toInt() + 1}", false))
-                adapter.notifyItemInserted(list.size - 1)
-    }
-    private fun removeItemRecycleView(){
-        positionItemChoose?.let {
-            list.removeAt(it)
-            adapter.notifyItemRemoved(it)
-        }
-    }
-    private fun removeLogicCode(){
-        viewItemChoose?.let {
-            Item.removeView(it)
-        }
-    }
-    private fun addLogicCode(){
-            val view = LayoutInflater.from(applicationContext).inflate(R.layout.item_layout,Item,false)
-            view?.let {
-                it.id = idItem
-                it.txtName.text = "Quốc Bảo $idItem"
-                idItem++
-                onClick(it)
-                Item.addView(it)
-            }
+    fun replaceFragment(fragment:Fragment){
+
+            btnBack.setBackgroundResource(R.drawable.back)
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.viewpager,fragment)
+                .addToBackStack(fragment::class.java.simpleName)
+                .commit()
 
     }
-    private fun myOnClick(action: (View) -> Unit) {
-            onclick = object : ListenerOnclick {
-                override fun onClickListener(view: View) {
-                        super.onClickListener(view)
-                        action(view)
-                }
-            }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if(supportFragmentManager.backStackEntryCount == 0)
+            btnBack.setBackgroundResource(R.drawable.menu)
 
     }
-    private fun onClick(view:View){
-            view.setOnTouchListener { v, event ->
-                v.performClick()
-                when(event.action){
-                    MotionEvent.ACTION_UP ->{
-                        if(abs(event.rawX - posXDown)<10f && abs(event.rawY - posYDown)<10f){
-                            onclick?.onClickListener(v)
-                        }
-                    }
-                    MotionEvent.ACTION_DOWN ->{
-                        posXDown = event.rawX
-                        posYDown = event.rawY
-                    }
-                }
-                true
-            }
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu,menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.chuyenmh->{
-                positionItemChoose = null
-                viewItemChoose = null
-                if(isRecycleView) {
-                    recycleView.visibility = View.GONE
-                    scrollView.visibility = View.VISIBLE
-                    isRecycleView = false
-                }
-                else{
-                    recycleView.visibility = View.VISIBLE
-                    scrollView.visibility = View.GONE
-                    isRecycleView = true
-                }
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
 }
 interface ListenerOnclick {
     fun onItemClick(view: View, position: Int) {

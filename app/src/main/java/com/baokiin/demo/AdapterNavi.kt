@@ -4,25 +4,24 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_layout.view.*
+import kotlinx.android.synthetic.main.item_navi.view.*
 import kotlin.math.abs
 
-class Adapter(val list:MutableList<DataItem>, val x:(Int)->Unit) :
-    RecyclerView.Adapter<Adapter.ViewHodel>() {
+class AdapterNavi(val list:MutableList<String>, val x:(Int)->Unit) :
+    RecyclerView.Adapter<AdapterNavi.ViewHodel>() {
     private var posXDown = 0f
     private var posYDown = 0f
-    var countCheck = 0
     inner class ViewHodel(v: View): RecyclerView.ViewHolder(v)
     {
         private var onclick:ListenerOnclick? = null
-        val checkBox: View =v.checkLayout
-        val name = v.txtName
-        fun setMyOnClick (action: (View, Int) -> Unit = {_,_ ->}) {
+        val name: TextView = v.txtTitleNavi
+        fun setMyOnClick (action: (Int) -> Unit = {_ ->}) {
             onclick = object : ListenerOnclick {
                 override fun onItemClick(view: View, position: Int) {
                     super.onItemClick(view, position)
-                    action(view,position )
+                    action(position )
                 }
             }
         }
@@ -51,9 +50,8 @@ class Adapter(val list:MutableList<DataItem>, val x:(Int)->Unit) :
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHodel {
-        val view = LayoutInflater.from(parent.context).inflate( R.layout.item_layout,parent,false)
-        val viewHodel=ViewHodel(view)
-        return viewHodel
+        val view = LayoutInflater.from(parent.context).inflate( R.layout.item_navi,parent,false)
+        return ViewHodel(view)
     }
 
     override fun getItemCount(): Int {
@@ -61,24 +59,10 @@ class Adapter(val list:MutableList<DataItem>, val x:(Int)->Unit) :
     }
 
     override fun onBindViewHolder(holder: ViewHodel, position: Int) {
-        holder.setMyOnClick { view, pos ->
-            if(list[pos].check != true){
-                list[pos].check = true
-                countCheck++
-                holder.checkBox.visibility = View.VISIBLE
-            }
-            else{
-                list[pos].check = false
-                countCheck--
-                holder.checkBox.visibility = View.GONE
-            }
+        holder.setMyOnClick {  pos ->
             x(pos)
         }
-        holder.name.text = list[position].name
-        if(list[position].check == true)
-            holder.checkBox.visibility = View.VISIBLE
-        else
-            holder.checkBox.visibility = View.GONE
+        holder.name.text = list[position]
     }
 
 }
