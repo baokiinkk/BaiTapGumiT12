@@ -10,29 +10,28 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.app_bar.view.*
-import kotlinx.android.synthetic.main.fragment_recycle_view.view.*
 import kotlinx.android.synthetic.main.navigation_view.view.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var listFragment:MutableList<Fragment>
+    private  var listFragment:MutableList<Fragment> = mutableListOf(FragmentRecycleView(),FragmentLogicCode())
+    private  var listTitleNavi:MutableList<String> = mutableListOf("RecycleView","LogicCode")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        listFragment = mutableListOf()
-        listFragment.add(FragmentRecycleView())
-        listFragment.add(FragmentLogicCode())
-
-        val listTitleNavi = mutableListOf<String>("RecycleView","LogicCode")
+        // onClick các item sẽ replace lại các fragment
         val adapter = AdapterNavi(listTitleNavi){
             replaceFragment(listFragment[it])
             textView.text = listTitleNavi[it]
             drawerLayout.closeDrawers()
         }
+
         val linearLayout: RecyclerView.LayoutManager = LinearLayoutManager(this)
         nav_view.naviRecycle.adapter=adapter
         nav_view.naviRecycle.layoutManager=linearLayout
 
+        // tabLayout
         includeActionBar.tablayout.addOnTabSelectedListener(object:TabLayout.OnTabSelectedListener{
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
@@ -50,6 +49,8 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+
+        // up button
         btnBack.setOnClickListener {
             if(supportFragmentManager.backStackEntryCount <= 0){
                 drawerLayout.openDrawer(nav_view)
@@ -59,6 +60,8 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    // mỗi khi repace thì em cho addBackStack để test up button, vì em không muốn nó add
     fun replaceFragment(fragment:Fragment){
 
             btnBack.setBackgroundResource(R.drawable.back)
@@ -70,6 +73,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // set lại icon khi stack == 0
     override fun onBackPressed() {
         super.onBackPressed()
         if(supportFragmentManager.backStackEntryCount == 0)

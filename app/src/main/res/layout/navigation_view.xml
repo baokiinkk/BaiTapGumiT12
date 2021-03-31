@@ -19,12 +19,13 @@
             android:layout_width="80dp"
             android:id="@+id/ivProfile"
             android:layout_gravity="center"
-            android:src="@drawable/ic_launcher_background"/>
+            android:src="@drawable/ic_launcher_background"
+            android:contentDescription="@string/app_name" />
 
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Quốc bảo"
+            android:text="@string/tacGia"
             android:layout_marginStart="30dp"
             android:layout_marginTop="10dp"
             android:textSize="18sp"
@@ -33,7 +34,7 @@
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Nhà xuất bản"
+            android:text="@string/xuanBan"
             android:layout_marginTop="4dp"
             android:layout_marginStart="30dp"
             android:textSize="14sp"

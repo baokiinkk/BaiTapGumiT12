@@ -7,4 +7,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="navigation_drawer_open">Mở</string>
     <string name="navigation_drawer_close">Đóng</string>
+    <string name="recycleview">RecycleView</string>
+    <string name="logiccode">LogicCode</string>
+    <string name="tacGia">Quốc bảo</string>
+    <string name="xuanBan">Nhà xuất bản</string>
 </resources>

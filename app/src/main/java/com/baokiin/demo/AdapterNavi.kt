@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_navi.view.*
 import kotlin.math.abs
 
-class AdapterNavi(val list:MutableList<String>, val x:(Int)->Unit) :
+class AdapterNavi(private val list:MutableList<String>, val x:(Int)->Unit) :
     RecyclerView.Adapter<AdapterNavi.ViewHodel>() {
     private var posXDown = 0f
     private var posYDown = 0f

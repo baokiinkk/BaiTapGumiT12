@@ -25,8 +25,6 @@ class FragmentLogicCode : Fragment() {
     private var idItem = 0 // biến sinh id cho các view sinh ra bằng code
     private var countCheckLogic = 0 // biến đếm các view dx chọn bằng logic code
     private var viewItemChoose:View? = null
-    private lateinit var adapter: AdapterItem
-    private val list = mutableListOf<DataItem>()
 
 
     @SuppressLint("SetTextI18n")
@@ -36,15 +34,6 @@ class FragmentLogicCode : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_logic_code, container, false)
-
-        for(i in 0..5)
-            list.add(DataItem("Quốc Bảo $i",false))
-
-        adapter = AdapterItem(list){ pos, name->
-            view.includeTitle.name.text = name
-            view.includeTitle.pos.text = "Position: $pos"
-        }
-
 
         onClickCustom(view.includeTitle)
         onClickCustom(view.btnAddItem)
@@ -86,11 +75,16 @@ class FragmentLogicCode : Fragment() {
         return view
     }
 
+
+    // khi remove thì thứ tự các view sẽ tự sắp xếp lại.
+    // nên muốn xóa vị trí nào chỉ cần đưa chỉ số. Ở đây em cho chọn view nào thì xóa view đó
     private fun removeLogicCode(){
         viewItemChoose?.let {
             Item.removeView(it)
         }
     }
+
+    //inflater ép layout về view để add nó vào parent, đồng thời cấp id và bắt xự kiện onClick
     @SuppressLint("SetTextI18n")
     private fun addLogicCode(){
         val view = LayoutInflater.from(requireContext()).inflate(R.layout.item_layout,Item,false)

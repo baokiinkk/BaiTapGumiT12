@@ -23,9 +23,13 @@ class FragmentRecycleView : Fragment() {
     private var posYDown = 0f
     private var countCheck = 0
     private var positionItemChoose:Int? = null
-    private lateinit var adapter: AdapterItem
     private val list:MutableList<DataItem> by lazy {
         mutableListOf<DataItem>()
+    }
+    private lateinit var adapter: AdapterItem
+    init {
+        for(i in 0..5)
+            list.add(DataItem("Quốc Bảo $i",false))
     }
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -34,9 +38,9 @@ class FragmentRecycleView : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_recycle_view, container, false)
-        for(i in 0..5)
-            list.add(DataItem("Quốc Bảo $i",false))
 
+
+        // onClick vào item thì sẽ set title và pos
         adapter = AdapterItem(list){ pos, name->
             view.includeTitle.name.text = name
             view.includeTitle.pos.text = "Position: $pos"
@@ -47,7 +51,7 @@ class FragmentRecycleView : Fragment() {
         view.recycleView.adapter=adapter
         view.recycleView.layoutManager=linearLayout
 
-
+        // bắt sự kiện vuốt kéo thả để xóa
         ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,  ItemTouchHelper.LEFT){
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -67,6 +71,8 @@ class FragmentRecycleView : Fragment() {
             }
 
         }).attachToRecyclerView(view.recycleView)
+
+
 
         onClickCustom(view.includeTitle)
         onClickCustom(view.btnAddItem)
