@@ -20,10 +20,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        txtTitle.text = listTitleNavi[0]
+
         // onClick các item sẽ replace lại các fragment
         val adapter = AdapterNavi(listTitleNavi){
             replaceFragment(listFragment[it])
-            textView.text = listTitleNavi[it]
+            txtTitle.text = listTitleNavi[it]
             drawerLayout.closeDrawers()
         }
 
@@ -43,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.let {
                     replaceFragment(listFragment[it.position])
-                    textView.text = listTitleNavi[it.position]
+                    txtTitle.text = listTitleNavi[it.position]
                 }
             }
 
@@ -55,8 +57,13 @@ class MainActivity : AppCompatActivity() {
             if(supportFragmentManager.backStackEntryCount <= 0){
                 drawerLayout.openDrawer(nav_view)
             }
-            else
+            else{
                 onBackPressed()
+                txtTitle.text = supportFragmentManager.fragments.last().toString().substring(8,18)
+                if(supportFragmentManager.backStackEntryCount == 0){
+                    btnBack.setBackgroundResource(R.drawable.menu)
+                }
+            }
         }
 
     }
@@ -73,13 +80,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    // set lại icon khi stack == 0
-    override fun onBackPressed() {
-        super.onBackPressed()
-        if(supportFragmentManager.backStackEntryCount == 0)
-            btnBack.setBackgroundResource(R.drawable.menu)
-
-    }
 
 }
 interface ListenerOnclick {
